@@ -1,0 +1,3 @@
+displayName = Dementia Mod
+author = K3LV0N
+version = 0.1
