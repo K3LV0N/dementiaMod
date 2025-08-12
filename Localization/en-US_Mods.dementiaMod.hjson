@@ -2,7 +2,7 @@
 
 Items: {
 	demontia: {
-		DisplayName: "demontia"
+		DisplayName: demontia
 		Tooltip:
 			'''
 			Template of an item
