@@ -1,3 +1,4 @@
 displayName = Dementia Mod
 author = K3LV0N
-version = 0.1.1
+version = 0.1.2.0
+homepage = https://discord.gg/DzsvHCGfYq

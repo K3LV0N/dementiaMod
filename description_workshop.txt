@@ -1,13 +1,37 @@
-This mod gives you dementia!
+﻿[h1]Dementia Mod[/h1]
 
-Overtime, your character will gradually forget things, like the items in their inventory, or how much items cost.
+This mod gives you [b]dementia[b]!
 
-Don't worry, this isn't permanent, just die and you'll be fit as a fiddle!
+Over time, your character will gradually forget things:
+[list]
+	[*]Items in their inventory
+	[*]How much items cost
+	[*]What boss summons you have (with cross-mod support!)
+[/list]
+
+Don’t worry, it’s not permanent — just die and you’ll be all good again!  
 
 
+[h2]Links:[/h2]
+[list]
+	[*][url=https://discord.gg/DzsvHCGfYq]Join the Discord![/url]
+	[*][url=https://github.com/K3LV0N/dementiaMod]See the GitHub![/url]
+[/list]
 
-This mod gives you dementia!
+[h2]Changelog[/h2]
+[h3]Update 0.1.2.0[/h3]
+[list]
+	[*]Added chance to forget what boss summons you have. (Works with other mods as long as they use the `Call()` method — see GitHub docs.)
+[/list]
 
-Don't worry, this isn't permanent, just die and you'll be fit as a fiddle!
+[h3]Update 0.1.1.2[/h3]
+[list]
+	[*]Fixed potential issue with dementia effect not properly handling items on death.  
+	[*]Slightly nerfed time to remember forgotten items.  
+	[*]Changed shop price forgetting mechanic → now has a greater chance for increased (and higher!) prices if you keep trying to open the shop in succession.
+[/list]
 
-This mod gives you dementia!
+[h3]Update 0.1.1.1[/h3]
+[list]
+	[*]Fixed issue with dementia effect not properly handling items on death.
+[/list]

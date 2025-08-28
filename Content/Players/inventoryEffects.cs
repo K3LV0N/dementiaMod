@@ -57,7 +57,51 @@ namespace dementiaMod.Content.Players
             }
         }
 
-        private bool AddForgottenItemsToInventory()
+        private void AddAllToRemember()
+        {
+            foreach(var key in forgottenItems.Keys)
+            {
+                itemsToRemember.Add(key);
+            }
+            forgottenItems.Clear();
+        }
+        private void ReturnAllItems()
+        {
+            AddAllToRemember();
+            List<Item> returningItems = itemsToRemember;
+            if (Player.difficulty == 0 || Player.difficulty == 3)
+            {
+                // Use a for loop to safely remove items while iterating
+                
+                for (int j = returningItems.Count - 1; j >= 0; j--)
+                {
+                    Item item = returningItems[j];
+                    for (int i = STARTING_INDEX; i < ENDING_INDEX; i++)
+                    {
+                        if (Player.inventory[i].IsAir)
+                        {
+                            Player.inventory[i] = item.Clone();
+                            returningItems.RemoveAt(j);
+                            break;
+                        }
+                    }
+                }
+            } else
+            {
+                for (int j = returningItems.Count - 1; j >= 0; j--)
+                {
+                    Item item = returningItems[j];
+                    Item.NewItem(Player.GetSource_Death(), Player.Center, item.type, item.stack, false, item.prefix);
+                    returningItems.RemoveAt(j);
+                    
+                }
+            }
+
+
+            forgottenItems = [];
+            itemsToRemember = [];
+        }
+        private void AddForgottenItemsToInventory()
         {
             if (!Main.playerInventory)
             {
@@ -72,12 +116,11 @@ namespace dementiaMod.Content.Players
                             Player.inventory[i] = item.Clone();
                             forgottenItems.Remove(item);
                             itemsToRemember.RemoveAt(j); // Remove after restoring
-                            return true;
+                            break;
                         }
                     }
                 }
             }
-            return false;
         }
 
         private void ForgetItems()
@@ -129,14 +172,23 @@ namespace dementiaMod.Content.Players
             AddForgottenItemsToInventory();
         }
 
-        
+        public override void PreUpdate()
+        {
+            // If the player is about to die (health is 0 or less, but not yet marked as dead)
+
+            if (Player.dead && forgottenItems.Count > 0)
+            {
+                ReturnAllItems();
+            }
+        }
+
         public override void PostUpdate()
         {
-            // Causes the player to forgor items in their inventory.
-            ForgetItems();
-
-
+            // Normal dementia logic
+            if (!Player.dead)
+            {
+                ForgetItems();
+            } 
         }
     }
-
 }

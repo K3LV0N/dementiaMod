@@ -17,8 +17,12 @@ namespace dementiaMod.Content.NPCs
         /// <param name="items"></param>
         private void ChangeShopPrices(NPC npc, string shopName, Item[] items)
         {
-            int dementiaTimer = Main.LocalPlayer.GetModPlayer<DementiaPlayer>().GetDementiaTimer;
+            DementiaPlayer dementiaPlayer = Main.LocalPlayer.GetModPlayer<DementiaPlayer>();
+            int dementiaTimer = dementiaPlayer.GetDementiaTimer;
             double itemPriceChangeChance = DementiaHelper.GetShopPriceChangeChance(dementiaTimer);
+
+            dementiaPlayer.OpenShop();
+            int penalty = dementiaPlayer.GetShopPenalty;
 
             for (int i = 0; i < items.Length; i++)
             {
@@ -27,11 +31,13 @@ namespace dementiaMod.Content.NPCs
                 if (item != null)
                 {
                     // remove on probability
-                    bool shouldChangeItemCost = random.NextDouble() < itemPriceChangeChance;
+                    // items have greater chance to increase in price when you spam shop
+                    bool shouldChangeItemCost = random.NextDouble() < itemPriceChangeChance * penalty;
                     if (shouldChangeItemCost)
                     {
-                        // ranges from being 25% cheaper to 75% more expensive :)
-                        double priceChangePercent = random.NextDouble() - 0.25;
+                        // ranges from being regular price to 50% more expensive
+                        // prices get higher the more frequently you open the shop
+                        double priceChangePercent = (random.NextDouble() * 0.5f) * penalty;
 
                         item.shopCustomPrice ??= item.value;
                         item.shopCustomPrice += (int)(item.value * priceChangePercent);

@@ -48,7 +48,7 @@ namespace dementiaMod
         public static int GetTimeToRememberOneSecondForEachMinute(int dementiaTimer) {
             // one second of forgetting the item exists per every minute of dementia
             // also add some random factor to make it more unpredictable
-            int secondsToRemember = (dementiaTimer / 60) * (int)(random.NextDouble() * 1.5);
+            int secondsToRemember = (dementiaTimer / 120) * (int)(random.NextDouble() * 1.5);
             return secondsToRemember;
         }
     }
