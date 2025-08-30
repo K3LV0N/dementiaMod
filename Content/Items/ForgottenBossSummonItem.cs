@@ -30,14 +30,14 @@ namespace dementiaMod.Content.Items
         }
 
         public override void SaveData(TagCompound tag) {
-            tag["npcIDs"] = npcIDs.ToList();
-            tag["isConsumable"] = Item.consumable;
+            tag[DementiaMod.MOD_NAME + "npcIDs"] = npcIDs.ToList();
+            tag[DementiaMod.MOD_NAME + "isConsumable"] = Item.consumable;
         }
         public override void LoadData(TagCompound tag)
         {
             npcIDs.Clear();
-            npcIDs = [.. tag.GetList<int>("npcIDs")];
-            Item.consumable = tag.GetBool("isConsumable");
+            npcIDs = [.. tag.GetList<int>(DementiaMod.MOD_NAME + "npcIDs")];
+            Item.consumable = tag.GetBool(DementiaMod.MOD_NAME + "isConsumable");
         }
         public override void NetSend(BinaryWriter writer) {
             // Write how many NPC IDs we have

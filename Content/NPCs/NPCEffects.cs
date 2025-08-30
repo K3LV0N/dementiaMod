@@ -18,11 +18,10 @@ namespace dementiaMod.Content.NPCs
         private void ChangeShopPrices(NPC npc, string shopName, Item[] items)
         {
             DementiaPlayer dementiaPlayer = Main.LocalPlayer.GetModPlayer<DementiaPlayer>();
-            int dementiaTimer = dementiaPlayer.GetDementiaTimer;
-            double itemPriceChangeChance = DementiaHelper.GetShopPriceChangeChance(dementiaTimer);
+            double itemPriceChangeChance = DementiaHelper.GetShopPriceChangeChance(dementiaPlayer);
 
             dementiaPlayer.OpenShop();
-            int penalty = dementiaPlayer.GetShopPenalty;
+            int penalty = dementiaPlayer.ShopPenalty;
 
             for (int i = 0; i < items.Length; i++)
             {

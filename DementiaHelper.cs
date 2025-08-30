@@ -1,55 +1,54 @@
-﻿using System;
+﻿using dementiaMod.Content.Players;
+using dementiaMod.Content.util;
+using System;
 namespace dementiaMod
 {
     public static class DementiaHelper
     {
-        public const double TEST_DEMENTIA_CHANCE = 0.0192;
-        public const double TEST_SHOP_DEMENTIA_CHANCE = .9;
+        // 70% chance for each item to have price increased
+        private const double MAX_SHOP_PRICE_CHANGE_CHANCE = 0.70;
+
+        // 0.5 % chance every second for every item at max dementia
+        private const double MAX_INVENTORY_ITEM_REMOVAL_CHANCE = 0.005 / 60;
+
+        // 2% chance every second for a boss summon item to morph
+        private const double MAX_BOSS_SUMMON_MORPH_CHANCE = 0.0200 / 60;
+
+        // 2 minutes for each item forgotten at max dementia
+        private static readonly TickTimer MAX_INVENTORY_ITEM_FORGET_TIME = 
+            new TickTimer(
+                hours: 0,
+                minutes: 2,
+                seconds: 0,
+                ticks: 0
+                );
+
+        public const double TEST_DEMENTIA_CHANCE = 0.01;
+        public const double TEST_SHOP_DEMENTIA_CHANCE = 0.90;
         private readonly static Random random = new();
 
 
-        /// <summary>
-        /// Around a 10% chance of triggering 1/59 every 10 minutes
-        /// </summary>
-        /// <param name="dementiaTimer"></param>
-        /// <returns></returns>
-        public static double GetShopPriceChangeChance(int dementiaTimer)
+
+        public static double GetShopPriceChangeChance(DementiaPlayer player)
         {
-            // 70% chance for item costs to change after ~4 hours of being alive in game.
-            double chance = Math.Min(.70, .00005 * dementiaTimer);
-            return chance;
+            return MAX_SHOP_PRICE_CHANGE_CHANCE * player.DementiaPercent;
         }
 
-        /// <summary>
-        /// Around a 10% chance of triggering 1/59 every 10 minutes
-        /// </summary>
-        /// <param name="dementiaTimer"></param>
-        /// <returns></returns>
-        public static double GetMediumItemRemovalChance(int dementiaTimer)
+        public static double GetBossSummonMorphChance(DementiaPlayer player)
         {
-            return Math.Min(1.0, 0.00000278 * Math.Exp(0.0005 * dementiaTimer));
+            return MAX_BOSS_SUMMON_MORPH_CHANCE * player.DementiaPercent;
         }
 
-        /// <summary>
-        /// Around a 5% chance of triggering 1/59 every 10 minutes
-        /// </summary>
-        /// <param name="dementiaTimer"></param>
-        /// <returns></returns>
-        public static double GetLowItemRemovalChance(int dementiaTimer)
+        public static double GetItemRemovalChance(DementiaPlayer player)
         {
-            return Math.Min(1.0, 0.00000139 * Math.Exp(0.0005 * dementiaTimer));
+            return MAX_INVENTORY_ITEM_REMOVAL_CHANCE * player.DementiaPercent;
         }
 
-        /// <summary>
-        /// Returns dementiaTimer / 60 with some variance
-        /// </summary>
-        /// <param name="dementiaTimer"></param>
-        /// <returns></returns>
-        public static int GetTimeToRememberOneSecondForEachMinute(int dementiaTimer) {
-            // one second of forgetting the item exists per every minute of dementia
-            // also add some random factor to make it more unpredictable
-            int secondsToRemember = (dementiaTimer / 120) * (int)(random.NextDouble() * 1.5);
-            return secondsToRemember;
+        public static TickTimer GetTimeToRememberItem(DementiaPlayer player) {
+
+            // can have up to 50% less or 50% more time to remember item
+            long ticksToRemember = (long)((MAX_INVENTORY_ITEM_FORGET_TIME.TotalTicks * player.DementiaPercent) * (1 + (random.NextDouble() - 0.5)));
+            return new TickTimer(ticksToRemember);
         }
     }
 }

@@ -1,3 +1,4 @@
+using dementiaMod.Content.util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace dementiaMod.Content.Players
 {
     public class InventoryEffects : ModPlayer
     {
-        Dictionary<Item, int> forgottenItems;
+        Dictionary<Item, TickTimer> forgottenItems;
         List<Item> itemsToRemember;
         readonly Random random;
 
@@ -28,12 +29,12 @@ namespace dementiaMod.Content.Players
 
             var forgottenPairs = forgottenItems.Select(kvp => new TagCompound
             {
-                ["item"] = ItemIO.Save(kvp.Key),
-                ["time"] = kvp.Value
+                [DementiaMod.MOD_NAME + "item:"] = ItemIO.Save(kvp.Key),
+                [DementiaMod.MOD_NAME + "TickTimer:"] = kvp.Value.CreateTagCompound(kvp.Key.Name)
             }).ToList();
-            tag["forgottenItems"] = forgottenPairs;
+            tag[DementiaMod.MOD_NAME + "forgottenItems:"] = forgottenPairs;
 
-            tag["itemsToRemember"] = itemsToRemember.Select(ItemIO.Save).ToList();
+            tag[DementiaMod.MOD_NAME + "itemsToRemember:"] = itemsToRemember.Select(ItemIO.Save).ToList();
             
         }
 
@@ -42,17 +43,16 @@ namespace dementiaMod.Content.Players
             itemsToRemember = [];
             forgottenItems = [];
 
+            itemsToRemember = tag.GetList<TagCompound>(DementiaMod.MOD_NAME +"itemsToRemember:").Select(ItemIO.Load).ToList();
 
-            itemsToRemember = tag.GetList<TagCompound>("itemsToRemember").Select(ItemIO.Load).ToList();
-
-            forgottenItems = new Dictionary<Item, int>();
-            if (tag.ContainsKey("forgottenItems"))
+            forgottenItems = new Dictionary<Item, TickTimer>();
+            if (tag.ContainsKey(DementiaMod.MOD_NAME +"forgottenItems:"))
             {
-                foreach (var pairTag in tag.GetList<TagCompound>("forgottenItems"))
+                foreach (var pairTag in tag.GetList<TagCompound>(DementiaMod.MOD_NAME + "forgottenItems:"))
                 {
-                    var item = ItemIO.Load(pairTag.GetCompound("item"));
-                    var time = pairTag.GetInt("time");
-                    forgottenItems[item] = time;
+                    var item = ItemIO.Load(pairTag.GetCompound(DementiaMod.MOD_NAME + "item:"));
+                    var timeCompound = pairTag.GetCompound(DementiaMod.MOD_NAME + "TickTimer:");
+                    forgottenItems[item] = new TickTimer(timeCompound, item.Name);
                 }
             }
         }
@@ -125,11 +125,8 @@ namespace dementiaMod.Content.Players
 
         private void ForgetItems()
         {
-            int dementiaTimer = Player.GetModPlayer<DementiaPlayer>().GetDementiaTimer;
-            short ticks = Player.GetModPlayer<DementiaPlayer>().GetTicks;
-
-            int secondsToRemember = DementiaHelper.GetTimeToRememberOneSecondForEachMinute(dementiaTimer);
-            double itemRemovalProbability = DementiaHelper.GetMediumItemRemovalChance(dementiaTimer);
+            DementiaPlayer player = Player.GetModPlayer<DementiaPlayer>();
+            double itemRemovalProbability = DementiaHelper.GetItemRemovalChance(player);
 
             // traverse indexes 10-49 to prevent removing hotbar items
             for (int i = STARTING_INDEX; i < ENDING_INDEX; i++)
@@ -147,26 +144,24 @@ namespace dementiaMod.Content.Players
 
                 if (shouldRemove)
                 {
-                    
-
-                    forgottenItems.Add(item.Clone(), secondsToRemember);
+                    TickTimer timeUntilRemember = DementiaHelper.GetTimeToRememberItem(player);
+                    forgottenItems.Add(item.Clone(), timeUntilRemember);
                     Player.inventory[i].TurnToAir();
                 }
             }
 
             foreach (var kvp in forgottenItems.ToList())
             {
-                if (kvp.Value <= 0)
+                if(kvp.Value.IsDone)
                 {
                     if (!itemsToRemember.Contains(kvp.Key))
+                    {
                         itemsToRemember.Add(kvp.Key);
+                    }
                 }
                 else
                 {
-                    if (ticks % 60 == 0)
-                    {
-                        forgottenItems[kvp.Key] = kvp.Value - 1;
-                    }    
+                    forgottenItems[kvp.Key]--;
                 }
             }
             AddForgottenItemsToInventory();

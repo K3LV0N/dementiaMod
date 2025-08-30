@@ -5,8 +5,9 @@ using Terraria.ModLoader;
 
 namespace dementiaMod
 {
-	public class dementiaMod : Mod
+	public class DementiaMod : Mod
 	{
+        public static String MOD_NAME = "dementiaMod:";
         public override object Call(params object[] args)
         {
             try

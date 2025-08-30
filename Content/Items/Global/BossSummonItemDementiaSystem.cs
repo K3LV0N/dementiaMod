@@ -13,8 +13,8 @@ namespace dementiaMod.Content.Items.Global
             IsBossItem gobalItem = item.GetGlobalItem<IsBossItem>();
             if (gobalItem.IsBossSummon)
             {
-                int dementiaTimer = player.GetModPlayer<DementiaPlayer>().GetDementiaTimer;
-                double itemMorphProbability = DementiaHelper.GetMediumItemRemovalChance(dementiaTimer) * 5;
+                DementiaPlayer dementiaPlayer = player.GetModPlayer<DementiaPlayer>();
+                double itemMorphProbability = DementiaHelper.GetBossSummonMorphChance(dementiaPlayer);
 
                 // morph boss summon on probability
                 bool shouldMorph = random.NextDouble() < itemMorphProbability;

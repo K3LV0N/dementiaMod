@@ -1,6 +1,6 @@
 ﻿[h1]Dementia Mod[/h1]
 
-This mod gives you [b]dementia[b]!
+This mod gives you [b]dementia[/b]!
 
 Over time, your character will gradually forget things:
 [list]
@@ -16,9 +16,17 @@ Don’t worry, it’s not permanent — just die and you’ll be all good again!
 [list]
 	[*][url=https://discord.gg/DzsvHCGfYq]Join the Discord![/url]
 	[*][url=https://github.com/K3LV0N/dementiaMod]See the GitHub![/url]
+	[*][url=https://www.patreon.com/k3lv0n]Consider supporting me on Patreon![/url]
 [/list]
 
+
 [h2]Changelog[/h2]
+[h3]Update 0.1.3.0[/h3]
+[list]
+	[*]Changed how chances for dementia effects are calculated. They are now linear and have a maximum value. Your character achieves maximum dementia chance at 10 hours of being alive.
+	[*]Major overhaul of mod structure and saving mechanics. NOTE: THIS WILL REMOVE YOUR ITEMS THAT WERE FORGOTTEN BEFORE THIS UPDATE. I apologize for this inconvenience.
+[/list]
+
 [h3]Update 0.1.2.0[/h3]
 [list]
 	[*]Added chance to forget what boss summons you have. (Works with other mods as long as they use the `Call()` method — see GitHub docs.)
